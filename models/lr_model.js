@@ -61,6 +61,6 @@ const LR_Schema = new mongoose.Schema(
   },
 });
 
-const LRModel = mongoose.model("LR", LR_Schema);
+const LRModel = mongoose.models.LR || mongoose.model("LR", LR_Schema);
 
 module.exports = LRModel;

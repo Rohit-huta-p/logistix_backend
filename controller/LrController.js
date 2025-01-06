@@ -5,14 +5,11 @@
  * update
  * delete
  */
-require('@babel/register')({
-  extensions: ['.js', '.jsx'],  // Allow Babel to transpile both .js and .jsx files
-});
 
 const path = require('path');
 const puppeteer = require('puppeteer');
 const companyModel = require("../models/company_model");
-const LRModel = require("../models/Lr_model");
+const LRModel = require("../models/lr_model");
 
 const { fetch_company_copy } = require("./utils");
 const findUser = async (id) => {
