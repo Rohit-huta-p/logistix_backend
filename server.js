@@ -15,7 +15,8 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 // CORS
 app.use(cors({
-    origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
+    origin: "https://logistix-backend.onrender.com",
     credentials: true,
 }));
 

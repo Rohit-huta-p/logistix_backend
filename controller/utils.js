@@ -1,4 +1,4 @@
-const LRModel = require("../models/lr_model");
+const LRModel = require("../models/Lr_model");
 const billCopy_model = require("../models/billCopy_model");
 const bookingRegister_model = require("../models/bookingRegister_model");
 const companyModel = require("../models/company_model");
