@@ -14,9 +14,20 @@ const mongoose = require('mongoose');
 // DOTENV
 require('dotenv').config();
 // CORS
+const allowedOrigins = [
+    "https://akash-road-carriers-frontend.onrender.com", // Frontend on Render
+    "http://localhost:3000" // Local development
+];
+
 app.use(cors({
-    // origin: "http://localhost:3000",
-    origin: "https://logistix-backend.onrender.com",
+    origin: function (origin, callback) {
+        // Check if the request origin is in the allowedOrigins array
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     credentials: true,
 }));
 
