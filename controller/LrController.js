@@ -9,7 +9,7 @@
 const path = require('path');
 const puppeteer = require('puppeteer');
 const companyModel = require("../models/company_model");
-const LRModel = require("../models/Lr_model.js");
+const LRModel = require("../models/lr_model");
 
 const { fetch_company_copy } = require("./utils");
 const findUser = async (id) => {
