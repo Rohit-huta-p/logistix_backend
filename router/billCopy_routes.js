@@ -19,11 +19,11 @@ const router = require('express').Router();
 router.get("/:comapnyId", get_billcopy)
 router.get("/specific/:billCopyId", get_billcopy_specific)
 
+router.get("/generatebillcopy/:billId", generateBillCopy)
 
 router.post("/add/:comapnyId", add_billcopy)
 router.patch("/update/:billcopyId", update_billcopy)
 router.delete("/delete/:comapnyId/:billcopyId", delete_billcopy)
-router.get("/generatebillcopy/:billId", generateBillCopy)
 
  
 module.exports = router
