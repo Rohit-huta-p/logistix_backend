@@ -109,6 +109,7 @@ const generateBillCopy = async (req, res) => {
         const { billId } = req.params; 
         const content = await billCopy_model.findById(billId);
         // console.log(content.name);
+        console.log("fdsfsdfsdfs", content);
         
         // // Generate HTML
         const html = BillCopyTemplate(content); 
@@ -133,9 +134,13 @@ const generateBillCopy = async (req, res) => {
     
         // Save and download (replace with your desired path)
 
-        const filePath = path.resolve(__dirname, '../../../arc/akashrc-main/src/assets/', `./tmp/billCopy_${billId}.pdf`);
+        const filePath = path.join(os.tmpdir(), `billCopy_${billId}.pdf`);
         fs.writeFileSync(filePath, pdfBuffer); 
-        res.download(filePath); 
+
+        res.download(filePath, (err) => {
+            if (err) console.error("Error sending file:", err);
+            fs.unlinkSync(filePath); // Delete file after sending
+        });
     
       } catch (error) {
         console.error(error);
