@@ -115,7 +115,10 @@ const generateBillCopy = async (req, res) => {
         const html = BillCopyTemplate(content); 
     
         // Create a Puppeteer browser instance
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+          executablePath: '/opt/render/.cache/puppeteer/chrome/linux-*/chrome',
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
         const page = await browser.newPage();
     
         // Set content and render
