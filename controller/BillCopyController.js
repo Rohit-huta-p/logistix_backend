@@ -15,7 +15,8 @@ const BillCopyTemplate = require("../pdf_templates/BillCopyTemplate");
 const puppeteer = require('puppeteer')
 
 const path = require('path');
-const fs = require('fs')
+const fs = require('fs');
+const billCopyModel = require("../models/billCopy_model");
 // FIND USER
 const findUser = async (id) =>{ 
     const userFound = await companyModel.find({_id: id});
@@ -41,6 +42,8 @@ const get_billcopy = async (req, res) => {
 
 // ADD Bill Copy
 const add_billcopy = async (req, res) => {
+  console.log("ehllo");
+  
     const {comapnyId} = req.params;
     let billcopyDetails = req.body;
     billcopyDetails = {...billcopyDetails, under_company: comapnyId}
@@ -49,8 +52,11 @@ const add_billcopy = async (req, res) => {
     try{
         const billcopy_added = new billCopy_model(billcopyDetails);
         await billcopy_added.save();
+        console.log("INDISED");
         return res.status(200).json({message: "Bill Copy ADDED",  success: true, content:billcopy_added })
     }catch(error){
+      console.log(error);
+      
         return res.status(400).json({error})
     }
 } 
@@ -58,6 +64,7 @@ const add_billcopy = async (req, res) => {
 
 // UPDATE BILL COPY
 const update_billcopy = async (req, res) => {
+  
     const {billcopyId} = req.params;
     const updates = req.body;
     try {
@@ -135,6 +142,19 @@ const generateBillCopy = async (req, res) => {
         res.status(500).json({ message: 'Error generating PDF' });
       }
     
-    }
+}
 
-module.exports = {add_billcopy, get_billcopy, update_billcopy, delete_billcopy, generateBillCopy}
+
+const get_billcopy_specific = async (req, res) =>{ 
+
+  try {
+    const { billCopyId } = req.params; 
+    const content = await billCopyModel.findById(billCopyId);
+    return res.status(200).json({data: content})
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json(error);
+  }
+}
+
+module.exports = {add_billcopy, get_billcopy, update_billcopy, delete_billcopy, generateBillCopy, get_billcopy_specific}

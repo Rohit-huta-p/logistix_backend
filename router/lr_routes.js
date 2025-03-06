@@ -11,12 +11,14 @@
  */
 
 const authenticate = require('../authenticate');
-const { addLr, getLrs, updateLr, deleteLr, generateLr, downloadLr } = require('../controller/LrController');
+const { addLr, getLrs, updateLr, deleteLr, generateLr, downloadLr, getLr } = require('../controller/LrController');
 
 const router = require('express').Router();
 
 
 router.get("/:companyId", getLrs)
+router.get("/specific/:lrid", getLr)
+
 router.post("/add/:companyId", addLr)
 router.patch("/update/:lrid", updateLr)
 router.delete("/delete/:comapnyId/:lrid", deleteLr)

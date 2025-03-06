@@ -100,4 +100,59 @@ const delete_bookingRegister= async (req, res) => {
     }
 }
 
-module.exports = {add_bookingRegister, get_bookingRegister, update_bookingRegister, delete_bookingRegister}
+const get_bookingregister_specific = async(req, res) => {
+    const {bookingregisterId} = req.params;
+
+
+    try {
+      const content = await bookingRegister_model.findById(bookingregisterId);
+      return res.status(200).json({data: content})
+    } catch (error) {
+      console.log(error);
+      
+    }
+}
+const bookingregesterTemplate = require('../pdf_templates/bookingRegisterTemplate');
+const { default: puppeteer } = require("puppeteer");
+const path = require("path");
+const fs = require('fs');
+const generatepdf = async (req, res) => {
+  try {
+    const { bookingRegisterId } = req.params; 
+    const content = await bookingRegister_model.findById(bookingRegisterId);
+    // console.log(content.name);
+    
+    // // Generate HTML
+    const html = bookingregesterTemplate(content); 
+
+    // Create a Puppeteer browser instance
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    // Set content and render
+    await page.setContent(html);
+    await page.emulateMediaType('print'); 
+
+    // Generate PDF
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      landscape: true,
+      printBackground: true,
+    });
+
+    // Close the browser
+    await browser.close();
+
+    // Save and download (replace with your desired path)
+
+    const filePath = path.resolve(__dirname, '../../../arc/akashrc-main/src/assets/', `./tmp/bookingRegister__${bookingRegisterId}.pdf`);
+    fs.writeFileSync(filePath, pdfBuffer); 
+    res.download(filePath); 
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error generating PDF' });
+  }
+}
+
+module.exports = {get_bookingregister_specific,add_bookingRegister, get_bookingRegister, update_bookingRegister, delete_bookingRegister, generatepdf}

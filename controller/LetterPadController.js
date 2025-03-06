@@ -1,7 +1,10 @@
+const { default: puppeteer } = require("puppeteer");
 const letterPad_model = require("../models/letterPad_model");
+const letterPadTemplate = require("../pdf_templates/letterPadTemplate");
 const { fetch_company_copy } = require("./utils");
 
-const getLetterPad =async (req, res) => {
+
+const getLetterPads =async (req, res) => {
     const {companyId} = req.params;
     // const id = req.user;
     // const userFound = findUser(id);
@@ -70,5 +73,59 @@ const deleteletterPad = async (req, res) => {
       }
 
 }
+const path = require("path");
+const fs = require('fs')
+const generateLetterPad = async (req, res) => {
+  try {
+    const { lpid } = req.params; 
+    const content = await letterPad_model.findById(lpid);
 
-module.exports = {getLetterPad, addLetterPad, updateLetterPad, deleteletterPad}
+    
+    // // Generate HTML
+    const html = letterPadTemplate(content); 
+
+    // Create a Puppeteer browser instance
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    // Set content and render
+    await page.setContent(html);
+    await page.emulateMediaType('print'); 
+
+    // Generate PDF
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      landscape: true,
+      printBackground: true,
+    });
+
+    // Close the browser
+    await browser.close();
+
+    // Save and download (replace with your desired path)
+
+    const filePath = path.resolve(__dirname, '../../../arc/akashrc-main/src/assets/', `./tmp/letterPad_${lpid}.pdf`);
+    fs.writeFileSync(filePath, pdfBuffer); 
+    res.download(filePath); 
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error generating PDF' });
+  }
+
+}
+
+
+const getLetterPad = async (req, res) => {
+  const {letterPadId} = req.params;
+
+
+  try {
+    const content = await letterPad_model.findById(letterPadId);
+    return res.status(200).json({data: content})
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+module.exports = {getLetterPads, getLetterPad, addLetterPad, updateLetterPad, deleteletterPad, generateLetterPad}

@@ -9,7 +9,7 @@
 const path = require('path');
 const puppeteer = require('puppeteer');
 const companyModel = require("../models/company_model");
-const LRModel = require("../models/lr_model");
+const LRModel = require("../models/Lr_model");
 
 const { fetch_company_copy } = require("./utils");
 const findUser = async (id) => {
@@ -61,11 +61,14 @@ const addLr = async (req, res) => {
 };
 
 const updateLr = async (req, res) => {
-  const { lrId } = req.params;
+  const { lrid } = req.params;
+
+  
   const updates = req.body;
+
   try {
     const updatedRecord = await LRModel.findByIdAndUpdate(
-      lrId,
+      lrid,
       { $set: updates },
       { new: true, runValidators: true }
     );
@@ -74,8 +77,11 @@ const updateLr = async (req, res) => {
       return res.status(404).json({ message: "Record not found" });
     }
 
-    res.status(200).json(content);
+    
+    res.status(200).json({data: updatedRecord});
   } catch (error) {
+    console.log(error);
+    
     res.status(500).json({ message: "Error updating record", error });
   }
 };
@@ -171,4 +177,20 @@ try {
   }
 
 }
-module.exports = { addLr, getLrs, updateLr, deleteLr, generateLr};
+
+
+
+const getLr =async (req, res) => {
+  const {lrid} = req.body;
+  try {
+    const { lrid } = req.params; 
+    const content = await LRModel.findById(lrid);
+    return res.status(200).json({data: content})
+  } catch (error) {
+    console.log(error);
+    
+    res.status(400).json(error);
+  }
+
+}
+module.exports = { addLr, getLrs, updateLr, deleteLr, generateLr, getLr};

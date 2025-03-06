@@ -23,7 +23,7 @@ const LR_Schema = new mongoose.Schema(
     add_deliveryOffice: String,
     consignment_note: {
       consignment_note_no: String,
-      consignment_date: Date,
+      consignment_date: String,
     },
   },
   gst_payable_by: {

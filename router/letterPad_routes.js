@@ -11,14 +11,15 @@
  * 2. Use data.message to see what has happened
  */
 
-const {getLetterPad, addLetterPad, updateLetterPad, deleteletterPad } = require('../controller/LetterPadController');
+const {getLetterPads,getLetterPad, addLetterPad, updateLetterPad, deleteletterPad, generateLetterPad } = require('../controller/LetterPadController');
 
 
 const router = require('express').Router();
 
 
 // GET
-router.get("/:companyId", getLetterPad)
+router.get("/:companyId", getLetterPads)
+router.get("/specific/:letterPadId", getLetterPad)
 
 // ADD
 router.post("/add/:companyId", addLetterPad)
@@ -30,6 +31,9 @@ router.patch("/update/:letterPadId", updateLetterPad)
 
 // DELTE
 router.delete("/delete/:companyId/:letterPadId", deleteletterPad)
+
+
+router.get("/generateletterpad/:lpid", generateLetterPad)
 
 
 

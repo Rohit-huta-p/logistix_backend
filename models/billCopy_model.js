@@ -9,7 +9,7 @@ const billCopy_Schema = mongoose.Schema({
       },
     name: String,
     billno: String,
-    date: Date,
+    date: String,
     billDetails: [
         {
             cn_number: String, 
