@@ -17,6 +17,7 @@ const puppeteer = require('puppeteer')
 const path = require('path');
 const fs = require('fs');
 const billCopyModel = require("../models/billCopy_model");
+
 // FIND USER
 const findUser = async (id) =>{ 
     const userFound = await companyModel.find({_id: id});
@@ -111,14 +112,15 @@ const generateBillCopy = async (req, res) => {
         // console.log(content.name);
         console.log("fdsfsdfsdfs", content);
         
-        // // Generate HTML
+        // Generate HTML
         const html = BillCopyTemplate(content); 
     
         // Create a Puppeteer browser instance
         const browser = await puppeteer.launch({
-          executablePath: '/opt/render/.cache/puppeteer/chrome/linux-*/chrome',
+          executablePath: '/usr/bin/google-chrome-stable',
           args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
+        });
+        
         const page = await browser.newPage();
     
         // Set content and render
