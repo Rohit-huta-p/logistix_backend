@@ -84,7 +84,7 @@ const deleteletterPad = async (req, res) => {
   }
 };
 
-const { puppeteer } = require("puppeteer-core");
+const puppeteer  = require("puppeteer-core");
 const os = require("os");
 const path = require("path");
 const fs = require("fs");

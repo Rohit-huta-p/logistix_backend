@@ -113,7 +113,7 @@ const get_bookingregister_specific = async(req, res) => {
     }
 }
 const bookingregesterTemplate = require('../pdf_templates/bookingRegisterTemplate');
-const { puppeteer } = require("puppeteer-core");
+const puppeteer = require("puppeteer-core");
 const os = require('os')
 const path = require("path");
 const fs = require('fs');
