@@ -113,7 +113,8 @@ const get_bookingregister_specific = async(req, res) => {
     }
 }
 const bookingregesterTemplate = require('../pdf_templates/bookingRegisterTemplate');
-const { default: puppeteer } = require("puppeteer");
+const { puppeteer } = require("puppeteer-core");
+const os = require('os')
 const path = require("path");
 const fs = require('fs');
 const generatepdf = async (req, res) => {
@@ -124,31 +125,35 @@ const generatepdf = async (req, res) => {
     
     // // Generate HTML
     const html = bookingregesterTemplate(content); 
+ const browser = await puppeteer.connect({
+          browserWSEndpoint: "wss://chrome.browserless.io?token=RvNKTn2Y0pCljd565a4e8a2f62eddcdd08b7c1b5b5"
+        });
+        const page = await browser.newPage();
+    
+        // Set content and render
+        await page.setContent(html);
+        await page.emulateMediaType('print'); 
+    
+        // Generate PDF
+        const pdfBuffer = await page.pdf({
+          format: 'A4',
+          landscape: true,
+          printBackground: true,
+        });
+    
+        // Close the browser
+        await browser.close();
+    
+        // Save and download (replace with your desired path)
 
-    // Create a Puppeteer browser instance
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+        const filePath = path.join(os.tmpdir(), `bookingRegister_${bookingRegisterId}.pdf`);
+        fs.writeFileSync(filePath, pdfBuffer); 
 
-    // Set content and render
-    await page.setContent(html);
-    await page.emulateMediaType('print'); 
-
-    // Generate PDF
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      landscape: true,
-      printBackground: true,
-    });
-
-    // Close the browser
-    await browser.close();
-
-    // Save and download (replace with your desired path)
-
-    const filePath = path.resolve(__dirname, '../../../arc/akashrc-main/src/assets/', `./tmp/bookingRegister__${bookingRegisterId}.pdf`);
-    fs.writeFileSync(filePath, pdfBuffer); 
-    res.download(filePath); 
-
+        res.download(filePath, (err) => {
+            if (err) console.error("Error sending file:", err);
+            fs.unlinkSync(filePath); // Delete file after sending
+        });
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error generating PDF' });

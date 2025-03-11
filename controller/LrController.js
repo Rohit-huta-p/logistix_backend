@@ -6,8 +6,7 @@
  * delete
  */
 
-const path = require('path');
-const puppeteer = require('puppeteer');
+
 const companyModel = require("../models/company_model");
 const LRModel = require("../models/lr_model");
 
@@ -131,13 +130,11 @@ const Lrtemplate = require('../pdf_templates/Lrtemplate')
 //   }
 // };
 
-const PDFDocument = require('pdfkit');
 
-
-const jsdom = require('jsdom')
-const { JSDOM } = jsdom;
+const path = require('path');
+const puppeteer = require('puppeteer-core');
 const fs = require('fs')
-
+const os = require('os')
 const generateLr = async (req, res) => {
 try {
   const { lrid } = req.params; 
@@ -145,18 +142,19 @@ try {
  
     // Generate HTML
     const html = Lrtemplate(content); 
-
-    // Create a Puppeteer browser instance
-    const browser = await puppeteer.launch();
+const browser = await puppeteer.connect({
+      browserWSEndpoint:
+        "wss://chrome.browserless.io?token=RvNKTn2Y0pCljd565a4e8a2f62eddcdd08b7c1b5b5",
+    });
     const page = await browser.newPage();
 
     // Set content and render
     await page.setContent(html);
-    await page.emulateMediaType('print'); 
+    await page.emulateMediaType("print");
 
     // Generate PDF
     const pdfBuffer = await page.pdf({
-      format: 'A4',
+      format: "A4",
       landscape: true,
       printBackground: true,
     });
@@ -165,12 +163,14 @@ try {
     await browser.close();
 
     // Save and download (replace with your desired path)
-    const outputPath = path.resolve(__dirname, '../../../arc/akashrc-main/src/assets/', `${new Date().getMonth()}_${new Date().getFullYear()}_${new Date().getTime()}_LR.pdf`);
-   
-    const filePath = path.resolve(__dirname, '../../../arc/akashrc-main/src/assets/', `./tmp/lr_${lrid}.pdf`);
-    fs.writeFileSync(filePath, pdfBuffer); 
-    res.download(filePath); 
 
+    const filePath = path.join(os.tmpdir(), `lr_${lrid}.pdf`);
+    fs.writeFileSync(filePath, pdfBuffer);
+
+    res.download(filePath, (err) => {
+      if (err) console.error("Error sending file:", err);
+      fs.unlinkSync(filePath); // Delete file after sending
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error generating PDF' });
