@@ -116,7 +116,7 @@ const generateBillCopy = async (req, res) => {
         const html = BillCopyTemplate(content); 
    
         const browser = await puppeteer.connect({
-          browserWSEndpoint: "wss://chrome.browserless.io?token=YOUR_API_KEY"
+          browserWSEndpoint: "wss://chrome.browserless.io?token=RvNKTn2Y0pCljd565a4e8a2f62eddcdd08b7c1b5b5"
         });
         const page = await browser.newPage();
     
