@@ -12,8 +12,8 @@ const { fetch_company_copy } = require("./utils");
 
 // PDF RELATED
 const BillCopyTemplate = require("../pdf_templates/BillCopyTemplate");
-const puppeteer = require('puppeteer')
 
+const puppeteer = require("puppeteer-core");
 const path = require('path');
 const fs = require('fs');
 const billCopyModel = require("../models/billCopy_model");
@@ -114,10 +114,9 @@ const generateBillCopy = async (req, res) => {
         
         // Generate HTML
         const html = BillCopyTemplate(content); 
-    
-       const browser = await puppeteer.launch({
-          headless: 'new', // Use the latest headless mode
-          args: ['--no-sandbox', '--disable-setuid-sandbox'],
+   
+        const browser = await puppeteer.connect({
+          browserWSEndpoint: "wss://chrome.browserless.io?token=YOUR_API_KEY"
         });
         const page = await browser.newPage();
     
